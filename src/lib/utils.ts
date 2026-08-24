@@ -1,67 +1,68 @@
-// Utility functions for common operations
-
-export const formatCurrency = (amount: number): string => {
-  return `₹${amount.toLocaleString('en-IN')}`;
+export const generateId = (prefix: string = ''): string => {
+  return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 };
 
-export const formatDate = (date: Date | string): string => {
-  const d = new Date(date);
-  return d.toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
+export const generateBookingId = (): string => {
+  return `BK${Date.now().toString().slice(-6)}${Math.random().toString(36).substr(2, 4).toUpperCase()}`;
+};
+
+export const formatCurrency = (amount: number): string => {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+  }).format(amount);
+};
+
+export const formatDate = (date: Date): string => {
+  if (typeof date === 'string') {
+    date = new Date(date);
+  }
+  return new Intl.DateTimeFormat('en-IN', {
     year: 'numeric',
-  });
+    month: 'short',
+    day: 'numeric',
+  }).format(date);
+};
+
+export const formatDateTime = (date: Date): string => {
+  if (typeof date === 'string') {
+    date = new Date(date);
+  }
+  return new Intl.DateTimeFormat('en-IN', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(date);
 };
 
 export const formatTime = (time: string): string => {
   const [hours, minutes] = time.split(':');
-  const hour = parseInt(hours);
-  const ampm = hour >= 12 ? 'PM' : 'AM';
-  const displayHour = hour % 12 || 12;
-  return `${displayHour}:${minutes} ${ampm}`;
+  return new Intl.DateTimeFormat('en-IN', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  }).format(new Date(`2000-01-01T${hours}:${minutes}`));
 };
 
-export const formatDateAndTime = (date: Date | string, time: string): string => {
-  return `${formatDate(date)} at ${formatTime(time)}`;
+export const getDayOfWeek = (date: Date): string => {
+  return new Intl.DateTimeFormat('en-IN', { weekday: 'long' }).format(date);
 };
 
-export const generateBookingId = (): string => {
-  const date = new Date();
-  const year = date.getFullYear();
-  const random = Math.random().toString(36).substring(2, 8).toUpperCase();
-  return `LH-${year}-${random}`;
+export const isToday = (date: Date): boolean => {
+  const today = new Date();
+  return date.toDateString() === today.toDateString();
 };
 
-export const generateId = (prefix: string = 'id'): string => {
-  return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-};
-
-export const isBusinessOpen = (openingHours: any, dayName: string): boolean => {
-  const day = dayName.toLowerCase() as keyof typeof openingHours;
-  const dayHours = openingHours[day];
-  return !dayHours.closed;
-};
-
-export const getInitials = (name: string): string => {
-  return name
-    .split(' ')
-    .map(word => word[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
-};
-
-export const truncateText = (text: string, length: number): string => {
-  if (text.length <= length) return text;
-  return text.slice(0, length) + '...';
-};
-
-export const getDayName = (date: Date): string => {
-  return date.toLocaleDateString('en-IN', { weekday: 'long' });
+export const isTomorrow = (date: Date): boolean => {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  return date.toDateString() === tomorrow.toDateString();
 };
 
 export const getNextNDays = (n: number): Date[] => {
-  const dates: Date[] = [];
+  const dates = [];
   for (let i = 0; i < n; i++) {
     const date = new Date();
     date.setDate(date.getDate() + i);
