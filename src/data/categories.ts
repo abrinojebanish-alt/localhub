@@ -1,0 +1,88 @@
+import { Category } from '../types';
+
+export const CATEGORIES: Category[] = [
+  {
+    id: 'turf',
+    name: 'Turf & Sports',
+    icon: '⚽',
+    description: 'Football turfs, sports grounds',
+    providerCount: 45,
+  },
+  {
+    id: 'salon',
+    name: 'Salon & Beauty',
+    icon: '💇',
+    description: 'Hair, nails, spa services',
+    providerCount: 120,
+  },
+  {
+    id: 'auto',
+    name: 'Auto Services',
+    icon: '🚗',
+    description: 'Car wash, repair, maintenance',
+    providerCount: 85,
+  },
+  {
+    id: 'home',
+    name: 'Home Services',
+    icon: '🏠',
+    description: 'Cleaning, plumbing, electrical',
+    providerCount: 200,
+  },
+  {
+    id: 'photography',
+    name: 'Photography',
+    icon: '📸',
+    description: 'Photographers, videography',
+    providerCount: 65,
+  },
+  {
+    id: 'events',
+    name: 'Events',
+    icon: '🎉',
+    description: 'Catering, decorations, planning',
+    providerCount: 95,
+  },
+  {
+    id: 'fitness',
+    name: 'Fitness',
+    icon: '💪',
+    description: 'Gyms, yoga, personal training',
+    providerCount: 110,
+  },
+  {
+    id: 'education',
+    name: 'Education',
+    icon: '📚',
+    description: 'Coaching, tutoring, classes',
+    providerCount: 140,
+  },
+  {
+    id: 'tech',
+    name: 'Tech Repair',
+    icon: '💻',
+    description: 'Mobile, laptop, electronics repair',
+    providerCount: 75,
+  },
+  {
+    id: 'laundry',
+    name: 'Laundry & Dry Cleaning',
+    icon: '🧺',
+    description: 'Laundry, ironing, dry cleaning',
+    providerCount: 55,
+  },
+  {
+    id: 'catering',
+    name: 'Catering',
+    icon: '🍽',
+    description: 'Catering, food delivery',
+    providerCount: 180,
+  },
+  {
+    id: 'repair',
+    name: 'Repair Services',
+    icon: '🔧',
+    description: 'General repairs and maintenance',
+    providerCount: 90,
+  },
+];
