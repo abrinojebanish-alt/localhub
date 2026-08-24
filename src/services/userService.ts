@@ -1,65 +1,85 @@
-import { User, CustomerUser, BusinessUser } from '../types';
+import { User } from '../types';
 
 const USERS_KEY = 'localhub_users';
 const CURRENT_USER_KEY = 'localhub_current_user';
 
+// Demo users
+const DEMO_USERS: User[] = [
+  {
+    id: 'user_customer_1',
+    name: 'John Doe',
+    email: 'customer@example.com',
+    phone: '+1 (555) 123-4567',
+    role: 'customer',
+    verified: true,
+    createdAt: new Date('2024-01-01'),
+  },
+  {
+    id: 'user_provider_1',
+    name: 'Sarah Johnson',
+    email: 'owner1@example.com',
+    phone: '+1 (555) 234-5678',
+    role: 'business',
+    businessName: 'FitZone Gym',
+    verified: true,
+    createdAt: new Date('2024-01-01'),
+  },
+];
+
 export const userService = {
-  getAllUsers: (): User[] => {
-    const stored = localStorage.getItem(USERS_KEY);
-    return stored ? JSON.parse(stored) : [];
-  },
-
-  getUserById: (id: string): User | null => {
-    const users = userService.getAllUsers();
-    return users.find(u => u.id === id) || null;
-  },
-
-  registerUser: (user: User): User => {
-    const users = userService.getAllUsers();
-    const existing = users.find(u => u.email === user.email);
-    if (existing) throw new Error('Email already registered');
+  registerUser: (user: User) => {
+    const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+    
+    // Check if user exists
+    if (users.some((u: User) => u.email === user.email)) {
+      throw new Error('User with this email already exists');
+    }
     
     users.push(user);
     localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    return user;
   },
 
   login: (email: string, password: string): User | null => {
-    const users = userService.getAllUsers();
-    const user = users.find(u => u.email === email);
-    if (!user) return null;
+    const users = JSON.parse(localStorage.getItem(USERS_KEY) || JSON.stringify(DEMO_USERS));
+    const user = users.find((u: User) => u.email === email);
     
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-    return user;
+    if (user) {
+      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+      return user;
+    }
+    
+    return null;
   },
 
-  logout: (): void => {
+  logout: () => {
     localStorage.removeItem(CURRENT_USER_KEY);
   },
 
   getCurrentUser: (): User | null => {
-    const stored = localStorage.getItem(CURRENT_USER_KEY);
-    return stored ? JSON.parse(stored) : null;
+    const user = localStorage.getItem(CURRENT_USER_KEY);
+    return user ? JSON.parse(user) : null;
   },
 
-  isLoggedIn: (): boolean => {
-    return userService.getCurrentUser() !== null;
+  getUserById: (id: string): User | undefined => {
+    const users = JSON.parse(localStorage.getItem(USERS_KEY) || JSON.stringify(DEMO_USERS));
+    return users.find((u: User) => u.id === id);
   },
 
-  updateUser: (user: User): User => {
-    const users = userService.getAllUsers();
-    const index = users.findIndex(u => u.id === user.id);
-    if (index === -1) throw new Error('User not found');
+  updateUser: (id: string, updates: Partial<User>) => {
+    const users = JSON.parse(localStorage.getItem(USERS_KEY) || JSON.stringify(DEMO_USERS));
+    const userIndex = users.findIndex((u: User) => u.id === id);
     
-    users[index] = user;
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    
-    // Update current user if it's the same
-    const current = userService.getCurrentUser();
-    if (current && current.id === user.id) {
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+    if (userIndex !== -1) {
+      users[userIndex] = { ...users[userIndex], ...updates };
+      localStorage.setItem(USERS_KEY, JSON.stringify(users));
+      
+      const currentUser = localStorage.getItem(CURRENT_USER_KEY);
+      if (currentUser) {
+        const parsedCurrentUser = JSON.parse(currentUser);
+        if (parsedCurrentUser.id === id) {
+          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify({ ...parsedCurrentUser, ...updates }));
+        }
+      }
     }
-    
-    return user;
   },
 };
